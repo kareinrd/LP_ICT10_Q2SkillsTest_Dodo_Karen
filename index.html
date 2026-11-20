@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Metal Elements</title>
+        <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #040404;
+            background: #eff6ff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background: #cab3b3;
+        }
+
+        main {
+            width: min(100%, 440px);
+            padding: 32px;
+            background: #e7d6d6;
+            border: 1px solid #dbeafe;
+            border-radius: 20px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 1.8rem;
+            text-align: center;
+            color: #000000;
+        }
+
+        .intro {
+            margin: 0 0 24px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input,
+        button {
+            min-height: 46px;
+            border-radius: 10px;
+            font: inherit;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 0 12px;
+            border: 1px solid #cbd5e1;
+        }
+
+        button {
+            padding: 0 16px;
+            border: 0;
+            background: #d7a1a1;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        #result {
+            min-height: 24px;
+            margin-top: 24px;
+        }
+
+        .element-card {
+            padding: 18px;
+            border: 1px solid #bfdbfe;
+            border-radius: 14px;
+            background: #f8fbff;
+        }
+
+        .element-card h2 {
+            margin: 0 0 14px;
+            color: #c27979;
+            font-size: 1.35rem;
+        }
+
+        .element-card dl {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px 16px;
+            margin: 0;
+        }
+
+        .element-card dt {
+            color: #475569;
+        }
+
+        .element-card dd {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .error {
+            color: #b91c1c;
+        }
+
+        @media (max-width: 420px) {
+            main {
+                padding: 24px;
+            }
+
+            .search-row {
+                flex-direction: column;
+              }}
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Non-Metal Elements</h1>
+        <p class="intro">Enter a non-metal element symbol to see all its details.</p>
+        <label for="element">Element symbol</label>
+        <div class="search-row">
+                <input id="element1" type="text" value="H" placeholder="E.g. O" maxlength="2"
+                   autocomplete="off" aria-describedby="result">
+            <button id="check-button" type="button">Check details</button>
+        </div>
+        <section id="result" aria-live="polite"></section>
+    </main>
+    <!-- Load main.py through PyScript for symbols it recognizes-->
+    <script type="py" src="./main.py" id="main-py"></script>
+    <script>
+        const elementInput = document.getElementById("element1");
+        const result = document.getElementById("result");
+
+        // Restores the symbol saved before the page was reloaded.
+        const savedElement = sessionStorage.getItem("element");
+        if (savedElement !== null) {
+            elementInput.value = savedElement;
+            sessionStorage.removeItem("element");
+        }
+
+        // Keeps this list in sync with the symbols in main.py.
+        const knownElements = new Set([
+            "h", "he", "c", "n", "o", "f", "ne", "p", "s", "cl",
+            "ar", "se", "br", "kr", "i", "xe", "r"
+        ]);
+        
+        if (!knownElements.has(elementInput.value.trim().toLowerCase())) {
+            document.getElementById("main-py").type = "application/x-disabled-py";
+            result.textContent = "Element not found";
+        }
+
+        // Save the entered symbol and reload so main.py reads the new value.
+        function runMain() {
+            sessionStorage.setItem("element", elementInput.value);
+            window.location.reload();
+        }
+
+        // Lets user submit with either the button or the Enter key.
+        document.getElementById("check-button").addEventListener("click", runMain);
+        elementInput.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                runMain();
+            }
+        });
+    </script>
+</body>
+</html>
